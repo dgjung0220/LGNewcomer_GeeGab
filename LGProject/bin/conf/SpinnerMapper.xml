@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="spinner">
+    
+    <!-- 관리자 카드 관리시 스피너 목록 만들기 -->
+	<select id = "spinnerStore" resultType="Storelist">
+	    select * from Storelist;    
+	</select>
+	
+	<select id = "spinnerCard" resultType="Cardlist">
+	    select * from Cardlist
+	</select>
+	
+</mapper>

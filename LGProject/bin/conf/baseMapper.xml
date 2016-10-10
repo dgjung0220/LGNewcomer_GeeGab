@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="base">
+	<insert id="memberInsert" parameterType="Member">
+		INSERT INTO MEMBER
+		VALUES(null,#{email},#{passwd},#{name},#{phone},#{addr});
+	</insert>
+
+	<insert id="userCardInsert" parameterType="Usercard">
+		INSERT INTO USERCARD
+		VALUES(null,#{cardID},#{email},#{cardName},#{cardType},#{cardAlias});
+	</insert>
+
+	<select id="loginAuth" resultType="Member">
+		select * from member where email = #{value}
+	</select>
+
+	<!-- DB에 상점 등록 -->
+	<select id="isStore" resultType="Storelist">
+		select * from storelist where storeName = #{value}
+	</select>
+	<insert id="addStore" parameterType="Storelist">
+		insert into storelist values(null,#{storeName});
+	</insert>
+
+	<!-- DB에 카드 등록 -->
+	<select id="isCard" resultType="Cardlist">
+		select * from cardlist where cardName = #{value}
+	</select>
+	<insert id="addCard" parameterType="Cardlist">
+		insert into cardlist values(null,#{cardName});
+	</insert>
+
+	<!-- 할인율 등록 -->
+	<insert id="insertDiscount" parameterType="DscntInfo">
+		insert into dscntinfo values(#{cardName},#{storeName},#{discountRate});
+	</insert>
+
+	<!-- 이미 등록되있는 할인율이니? -->
+	<select id="isDiscount" resultType="DscntInfo">
+		select * from DscntInfo where storeName= #{storeName} AND cardName=
+		#{cardName};
+	</select>
+	<!-- 이미 등록되있는 할인율이라면 Update한다. -->
+	<update id="updateDiscount" parameterType="DscntInfo">
+		update DscntInfo SET DISCOUNTRATE=#{discountRate} where storeName=
+		#{storeName} AND cardName= #{cardName};
+	</update>
+
+	<select id="dscntInfo" resultType="DscntInfo">
+		select * from dscntInfo
+	</select>
+
+	<!-- 카드 추천 -->
+	<select id="recommandCard" parameterType="RecommandInputData" resultType="UserCardJoinDscnt">
+
+		SELECT USERCARD.cardName, USERCARD.cardAlias, USERCARD.cardID,
+		USERCARD.cardType,DSCNTINFO.DiscountRate
+		FROM USERCARD JOIN DSCNTINFO ON USERCARD.cardName = DSCNTINFO.cardName
+		where USERCARD.email = #{email} AND DSCNTINFO.StoreName = #{storeName}
+		ORDER BY DSCNTINFO.DiscountRate DESC;
+	</select>
+	<select id="userCardSelect" resultType="Usercard">
+		select * from Usercard where email = #{value}
+	</select>
+	
+	<!-- 관리자가 회원을 검색합니다. -->
+	<select id="searchMember" resultType="Member">
+	    select * from member where email like '%'||#{value}||'%' 
+
+	</select>
+	<select id="memberAll" resultType="Member">
+	    select * from member
+	</select>
+	
+	<!-- 카드 및 사용자 정보 삭제 -->
+	<delete id = "memberDelete" parameterType="String">
+	    delete from member where email = #{value}
+	</delete>
+	<delete id= "userCardDelete" parameterType="Deleteusercard">
+	    delete from usercard where email = #{email} and cardID = #{cardID}
+	</delete>
+</mapper>
